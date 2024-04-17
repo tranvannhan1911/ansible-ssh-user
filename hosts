@@ -1,0 +1,21 @@
+[servers]
+svr00 ansible_host=10.0.0.4 ansible_ssh_user=root
+svr01 ansible_host=10.0.0.5 ansible_ssh_user=root
+db00 ansible_host=10.0.0.9 ansible_ssh_user=root
+db01 ansible_host=10.0.0.10 ansible_ssh_user=root
+db02 ansible_host=10.0.0.11 ansible_ssh_user=root
+gua00 ansible_host=10.0.0.15 ansible_ssh_user=root
+gua01 ansible_host=10.0.0.16 ansible_ssh_user=root
+
+[web_server]
+svr00
+svr01
+
+[db]
+db00
+db01
+db02
+
+[guacamole]
+gua00
+gua01

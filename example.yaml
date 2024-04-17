@@ -1,0 +1,22 @@
+---
+- name: SSH user for FCD webserver
+  hosts: web_server 
+  roles:
+  - role: ssh-user-role
+    ssh_username: nhantv12
+    public_key_file: "./files/nhantv12.authorized_keys"
+    is_sudo: true
+
+  - role: ssh-user-role
+    ssh_username: trongtq
+    public_key_file: "./files/trongtq.authorized_keys"
+    is_sudo: true
+
+- name: SSH user for FCD DB
+  hosts: db
+  roles:
+  - role: ssh-user-role
+    ssh_username: nhantv12
+    public_key_file: "./files/nhantv12.authorized_keys"
+    is_sudo: true
+

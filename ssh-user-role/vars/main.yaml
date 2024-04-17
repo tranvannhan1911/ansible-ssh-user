@@ -1,0 +1,4 @@
+hosts:
+ssh_username:
+public_key_file:
+is_sudo:
