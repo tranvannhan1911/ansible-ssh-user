@@ -29,7 +29,11 @@
     mode: '0700'
     state: directory
   become: true
-  become_user: '{{ ssh_username }}'
+  #  become_user: '{{ ssh_username }}'
+
+- name: Change ownership of .ssh directory
+  command: chown {{ ssh_username }}:{{ ssh_username }} {{ ssh_home }}/.ssh
+  become: true
 
 - name: authorized_keys init
   set_fact:
@@ -41,7 +45,13 @@
   authorized_key:
     user: "{{ ssh_username }}"
     key: "{{ lookup('file', public_key_file) }}"
-  become_user: "{{ ssh_username }}"
+  become: true
+  #become_user: "{{ ssh_username }}"
+
+- name: Change ownership of authorized_keys
+  command: chown {{ ssh_username }}:{{ ssh_username }} {{ ssh_home }}/.ssh/authorized_keys
+  become: true
+
 
 - name: Add user to sudoers without password prompt
   lineinfile:
