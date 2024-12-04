@@ -9,8 +9,15 @@
   user:
     name: '{{ ssh_username }}'
     shell: /bin/bash
+    expires: "{{ (ssh_user_expiry_date | to_datetime('%Y-%m-%d')).strftime('%s') if ssh_user_expiry_date is defined else omit }}"
   when: ssh_username is defined and ssh_username in getent_passwd and getent_passwd['ssh_username'] is not defined
   become: true
+
+- name: Ensure group exists for the user
+  become: true
+  group:
+    name: "{{ ssh_username }}"
+    state: present
 
 - name: query user information
   getent:
