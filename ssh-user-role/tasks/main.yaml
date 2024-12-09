@@ -70,3 +70,48 @@
   become: yes
   become_user: root
   when: is_sudo
+
+- name: Add user to AllowUsers in SSH config
+  when: add_allow_user
+  become: true
+  block:
+  - name: Get current AllowUsers line
+    command: grep '^AllowUsers' /etc/ssh/sshd_config
+    register: allow_users_line
+    failed_when: false  # Không báo lỗi nếu dòng không tồn tại
+    changed_when: false # Đảm bảo task này không ghi nhận thay đổi
+
+  - name: Ensure AllowUsers line exists
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^AllowUsers'
+      line: 'AllowUsers'
+      state: present
+      create: yes
+    when: not allow_users_line.stdout
+
+  - name: Get current AllowUsers line after add AllowUsers
+    command: grep '^AllowUsers' /etc/ssh/sshd_config
+    register: allow_users_line
+    failed_when: false
+    changed_when: false
+
+  - name: debug allow_users_line.stdout
+    debug:
+      var: allow_users_line.stdout
+
+  - name: Add new user to AllowUsers if not already present
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^AllowUsers'
+      line: "{{ allow_users_line.stdout }} {{ ssh_username }}"
+      backrefs: yes
+    when:
+      #      - add_allow_user  # Chỉ chạy nếu add_allow_user = true
+      - allow_users_line.stdout is search('(^|\\s){{ ssh_username }}(\\s|$)') == false
+
+  - name: Restart SSH service to apply changes
+    service:
+      name: sshd
+      state: restarted
+        #    when: add_allow_user
